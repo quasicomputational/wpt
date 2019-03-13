@@ -4,7 +4,6 @@
 // https://wicg.github.io/webusb/test/
 
 (() => {
-
 // These variables are logically members of the USBTest class but are defined
 // here to hide them from being visible as fields of navigator.usb.test.
 let internal = {
@@ -68,7 +67,11 @@ function fakeDeviceInitToDeviceInfo(guid, init) {
     var configInfo = {
       configurationValue: config.configurationValue,
       configurationName: stringToMojoString16(config.configurationName),
-      interfaces: []
+      selfPowered: false,
+      remoteWakeup: false,
+      maximumPower: 0,
+      interfaces: [],
+      extraData: new Uint8Array()
     };
     config.interfaces.forEach(iface => {
       var interfaceInfo = {
@@ -82,12 +85,17 @@ function fakeDeviceInitToDeviceInfo(guid, init) {
           subclassCode: alternate.interfaceSubclass,
           protocolCode: alternate.interfaceProtocol,
           interfaceName: stringToMojoString16(alternate.interfaceName),
-          endpoints: []
+          endpoints: [],
+          extraData: new Uint8Array()
         };
         alternate.endpoints.forEach(endpoint => {
           var endpointInfo = {
             endpointNumber: endpoint.endpointNumber,
             packetSize: endpoint.packetSize,
+            synchronizationType: device.mojom.UsbSynchronizationType.NONE,
+            usageType: device.mojom.UsbUsageType.DATA,
+            pollingInterval: 0,
+            extraData: new Uint8Array()
           };
           switch (endpoint.direction) {
           case "in":
